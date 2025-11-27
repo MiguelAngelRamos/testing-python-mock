@@ -12,6 +12,10 @@ def mock_inventory_system():
     return MagicMock(spec=InventorySystem)
 
 @pytest.fixture
+def processor(mock_payment_gateway, mock_inventory_system):
+    return OrderProcessor(payment_gateway=mock_payment_gateway, inventory_system=mock_inventory_system)
+
+@pytest.fixture
 def sample_order():
     return {
         "order_id": 101,
