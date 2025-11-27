@@ -22,10 +22,10 @@ def test_process_order_sucess(processor, mock_inventory_system, mock_payment_gat
     mock_payment_gateway.charge.assert_called_once_with(100.0, "tok_visa_123")
 
 
-@pytest.mark.unit
-def test_process_order_no_stock():
-    pass
+# @pytest.mark.unit
+# def test_process_order_no_stock():
+#     pass
 
-@pytest.mark.unit
-def test_payment_failure_scenarios():
-    pass
+# @pytest.mark.unit
+# def test_payment_failure_scenarios():
+#     pass
