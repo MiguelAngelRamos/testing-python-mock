@@ -12,11 +12,11 @@ class OrderProcessor:
         card_token = order.get("card_token")
 
         # 1. Validar el stock
-        if not self.inventory.check_stock(product_id, quantity):
+        if not self.inventory_system.check_stock(product_id, quantity):
             raise ValueError(f"Stock insuficiente para el producto {product_id}")
         
         # 2. Procesar el pago
-        payment_successful = self.payment_gw.charge(amount, card_token)
+        payment_successful = self.payment_gateway.charge(amount, card_token)
 
         if not payment_successful:
             raise ValueError("El pago fue rechazado por la pasarela.")     
