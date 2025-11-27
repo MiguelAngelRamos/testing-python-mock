@@ -22,10 +22,22 @@ def test_process_order_sucess(processor, mock_inventory_system, mock_payment_gat
     mock_payment_gateway.charge.assert_called_once_with(100.0, "tok_visa_123")
 
 
-# @pytest.mark.unit
-# def test_process_order_no_stock():
-#     pass
+@pytest.mark.unit
+def test_process_order_no_stock(processor, mock_payment_gateway, mock_inventory_system, sample_order):
+    ## GIVEN: El inventario no es suficiente fuerzo a que retorne False
+    mock_inventory_system.check_stock.return_value = False
 
+    # When / Then 
+    # pytest.raises: Context manager que verifica que se lance una excepción
+    # ValueError : tipo de excepcion esperada
+    with pytest.raises(ValueError) as excinfo:
+        processor.process_order(sample_order)
+
+    assert "Stock insuficiente" in str(excinfo.value)
+
+    ## Aseguramos que NO se intentó cobrar si no habia stock
+    mock_payment_gateway.charge.assert_not_called()
+    
 # @pytest.mark.unit
 # def test_payment_failure_scenarios():
 #     pass
