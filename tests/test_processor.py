@@ -37,7 +37,32 @@ def test_process_order_no_stock(processor, mock_payment_gateway, mock_inventory_
 
     ## Aseguramos que NO se intentó cobrar si no habia stock
     mock_payment_gateway.charge.assert_not_called()
+
+@pytest.mark.unit
+@pytest.mark.parametrize("amount, card_token", [
+    (0, "tok_invalid"),
+    (1000000, "tok_limit"),
+    (-50, "tok_error")
+    ])
+def test_payment_failure_scenarios(processor, mock_payment_gateway,mock_inventory_system, sample_order, amount, card_token):
+    # GIVEN Configuracion del escenario (Arrange)
+    order_data = sample_order.copy()
+
+    # Modificamos
+    order_data["amount"] = amount
+    order_data["card_token"] = card_token
+
+    # Configuramos los mocks para simular el comportamiento esperado 
+    mock_inventory_system.check_stock.return_value = True # Simula que si hay stock disponible
+    mock_payment_gateway.charge.return_value = False # Simula que el pago Falla
     
-# @pytest.mark.unit
-# def test_payment_failure_scenarios():
-#     pass
+
+    # When / Then : Ejecución y Verificación combinadas
+    with pytest.raises(ValueError) as excinfo:
+        processor.process_order(order_data)
+
+    assert "El pago fue rechazado" in str(excinfo.value)
+
+    
+
+
